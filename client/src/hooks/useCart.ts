@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { useAuth } from "./useAuth";
+import { useAuth } from "./use-auth";
 
 export function useCart() {
   const { toast } = useToast();
