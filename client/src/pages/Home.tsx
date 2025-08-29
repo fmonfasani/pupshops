@@ -11,16 +11,14 @@ export default function Home() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
+        title: "Please log in",
+        description: "Redirecting to login...",
+        variant: "default",
       });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+      // Only redirect once, don't create a loop
+      window.location.href = "/api/login";
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isLoading, toast]); // Remove isAuthenticated from dependencies to prevent loop
 
   if (isLoading || !isAuthenticated) {
     return (

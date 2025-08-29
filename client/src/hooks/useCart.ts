@@ -11,9 +11,13 @@ export function useCart() {
 
   const { data: cartItems = [], isLoading, refetch } = useQuery({
     queryKey: ["/api/cart"],
-    queryFn: () => api.getCart(),
-    enabled: isAuthenticated,
+    queryFn: () => api.get("/api/cart"),
+    enabled: !!user,
+    retry: false, // Don't retry cart requests on auth failures
   });
+
+  // Ensure cartItems is always an array
+  const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
 
   const addToCartMutation = useMutation({
     mutationFn: ({ productId, quantity }: { productId: string; quantity?: number }) =>
@@ -85,14 +89,14 @@ export function useCart() {
     },
   });
 
-  const cartTotal = cartItems.reduce((total: number, item: any) => {
+  const cartTotal = safeCartItems.reduce((total: number, item: any) => {
     return total + (parseFloat(item.product.price) * item.quantity);
   }, 0);
 
-  const cartItemCount = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+  const cartItemCount = safeCartItems.reduce((total: number, item: any) => total + item.quantity, 0);
 
   return {
-    cartItems,
+    cartItems: safeCartItems,
     cartTotal,
     cartItemCount,
     isLoading,
