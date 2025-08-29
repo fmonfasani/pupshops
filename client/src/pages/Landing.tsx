@@ -69,7 +69,7 @@ export default function Landing() {
             data-testid="img-hero-background"
           />
         </div>
-        
+
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" data-testid="text-hero-title">
             Everything your 
@@ -79,7 +79,7 @@ export default function Landing() {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
             From premium food to professional grooming services, we've got your pet covered with love and care.
           </p>
-          
+
           <div className="mb-8">
             <img 
               src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
@@ -238,7 +238,7 @@ export default function Landing() {
               "https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
               "https://images.unsplash.com/photo-1574158622682-e40e69881006?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
               "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-              "https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+              "https://images.unsplash.com/photo-15738655273-52738655273?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
               "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
               "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300"
             ].map((src, index) => (
@@ -265,7 +265,7 @@ export default function Landing() {
               </div>
               <p className="text-muted-foreground">Everything your furry friend needs in one place. Quality products and professional services for dogs and cats.</p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Products</h4>
               <ul className="space-y-2 text-muted-foreground">
@@ -275,7 +275,7 @@ export default function Landing() {
                 <li><a href="#" className="hover:text-primary transition-colors">Health & Wellness</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Services</h4>
               <ul className="space-y-2 text-muted-foreground">
@@ -285,7 +285,7 @@ export default function Landing() {
                 <li><a href="#" className="hover:text-primary transition-colors">Dog Walking</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Connect</h4>
               <div className="flex space-x-4 mb-4">
@@ -303,7 +303,7 @@ export default function Landing() {
               <p className="text-muted-foreground text-sm">📞 (555) 123-PAWS</p>
             </div>
           </div>
-          
+
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
             <p>&copy; 2023 PupShops. All rights reserved. Made with ❤️ for pet lovers.</p>
           </div>
