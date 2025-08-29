@@ -7,11 +7,11 @@ import { useAuth } from "./useAuth";
 export function useCart() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, isLoading: isLoadingUser } = useAuth();
 
-  const { data: cartItems = [], isLoading } = useQuery({
+  const { data: cartItems = [], isLoading, refetch } = useQuery({
     queryKey: ["/api/cart"],
-    queryFn: api.getCart,
+    queryFn: () => api.getCart(),
     enabled: isAuthenticated,
   });
 
@@ -96,6 +96,7 @@ export function useCart() {
     cartTotal,
     cartItemCount,
     isLoading,
+    refetch,
     addToCart: addToCartMutation.mutate,
     updateCart: updateCartMutation.mutate,
     removeFromCart: removeFromCartMutation.mutate,
