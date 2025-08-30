@@ -11,7 +11,7 @@ export function useCart() {
 
   const { data: cartItems = [], isLoading, refetch } = useQuery({
     queryKey: ["/api/cart"],
-    queryFn: () => api.get("/api/cart"),
+    queryFn: () => api.getCart(),
     enabled: !!user,
     retry: false, // Don't retry cart requests on auth failures
   });
