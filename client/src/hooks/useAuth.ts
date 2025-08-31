@@ -5,7 +5,7 @@ import { isUnauthorizedError } from "../lib/authUtils";
 export function useAuth() {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/user"],
-    queryFn: () => api.get("/api/auth/user"),
+    queryFn: api.getUser,
     retry: (failureCount, error) => {
       // Don't retry on 401 errors to prevent loops
       if (isUnauthorizedError(error as Error)) {
