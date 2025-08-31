@@ -15,7 +15,7 @@ export function authRequired(req: Request, res: Response, next: NextFunction) {
   const token = h.startsWith('Bearer ') ? h.slice(7) : '';
   if (!token) return res.status(401).json({ error: 'missing token' });
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, getJwtSecret()) as JwtPayload;
     // @ts-ignore
     req.user = { id: payload.uid };
     next();
@@ -34,10 +34,6 @@ const TOKEN_TTL: jwt.SignOptions['expiresIn'] = (process.env.TOKEN_TTL as any) ?
 function signToken(uid: string) {
   return jwt.sign({ uid } as JwtPayload, getJwtSecret(), { expiresIn: TOKEN_TTL });
 }
-
-// y en authRequired:
-const payload = jwt.verify(token, getJwtSecret()) as JwtPayload;
-
 
 export async function register(req: Request, res: Response) {
   const { email, password, name } = req.body ?? {};
