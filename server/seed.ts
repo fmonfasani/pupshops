@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { db } from './db';
+import { db } from './db.ts_old';
 import { sql } from 'drizzle-orm';
 
 async function main() {
