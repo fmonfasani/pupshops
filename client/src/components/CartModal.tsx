@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useCart } from "@/hooks/useCart";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useCart } from "../hooks/useCart";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
 import { X, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useLocation } from "wouter";
 

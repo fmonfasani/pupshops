@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { useCart } from "@/hooks/useCart";
+import { Button } from "../components/ui/button";
+import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
 import { ShoppingCart, Menu, X, Heart, Star } from "lucide-react";
 
 export default function Navigation() {

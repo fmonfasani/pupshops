@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { isUnauthorizedError } from "@/lib/authUtils";
+import { api } from "../lib/api";
+import { isUnauthorizedError } from "../lib/authUtils";
 
 export function useAuth() {
   const { data: user, isLoading, error } = useQuery({
