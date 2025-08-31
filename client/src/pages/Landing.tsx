@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 import { Heart, Truck, Star, ShoppingCart, Calendar } from "lucide-react";
-import { api } from "@/lib/api";
-import BookingModal from "@/components/BookingModal";
-import { useCart } from "@/hooks/useCart";
+import { api } from "../lib/api";
+import BookingModal from "../components/BookingModal";
+import { useCart } from "../hooks/useCart";
 
 export default function Landing() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -299,7 +299,7 @@ export default function Landing() {
                   <i className="fab fa-twitter text-xl"></i>
                 </a>
               </div>
-              <p className="text-muted-foreground text-sm">📧 hello@pupshops.com</p>
+              <p className="text-muted-foreground text-sm">📧 hello../pupshops.com</p>
               <p className="text-muted-foreground text-sm">📞 (555) 123-PAWS</p>
             </div>
           </div>

@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import Layout from "@/components/Layout";
-import BookingModal from "@/components/BookingModal";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/use-toast";
+import Layout from "../components/Layout";
+import BookingModal from "../components/BookingModal";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Clock, Heart, Search, Stethoscope, Scissors, Home, Dog } from "lucide-react";
-import { api } from "@/lib/api";
+import { api } from "../lib/api";
 
 export default function Services() {
   const { toast } = useToast();

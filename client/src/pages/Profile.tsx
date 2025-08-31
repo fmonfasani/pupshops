@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import Layout from "@/components/Layout";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/use-toast";
+import Layout from "../components/Layout";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Progress } from "../components/ui/progress";
 import { Calendar, Package, Star, Award, Clock, CheckCircle, Truck, MapPin } from "lucide-react";
-import { api } from "@/lib/api";
+import { api } from "../lib/api";
 
 export default function Profile() {
   const { toast } = useToast();
@@ -93,7 +93,7 @@ export default function Profile() {
               </div>
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl font-bold mb-2" data-testid="text-profile-name">
-                  {user?.firstName || user?.email?.split('@')[0] || 'Pet Parent'}
+                  {user?.firstName || user?.email?.split('..')[0] || 'Pet Parent'}
                 </h1>
                 <p className="text-muted-foreground mb-4" data-testid="text-profile-email">{user?.email}</p>
                 

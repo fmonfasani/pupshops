@@ -3,11 +3,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "..//components/ui/button";
+import { Card, CardContent } from "..//components/ui/card";
+import { Input } from "..//components/ui/input";
+import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from "..//components/ui/form";
+import { useToast } from "..//hooks/use-toast";
 
 const schema = z.object({
   email: z.string().email(),
@@ -59,7 +59,7 @@ export default function Login() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <FormControl><Input type="email" placeholder="you@example.com" {...field} /></FormControl>
+                    <FormControl><Input type="email" placeholder="you../example.com" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

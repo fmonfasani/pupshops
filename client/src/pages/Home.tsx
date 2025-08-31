@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import Layout from "@/components/Layout";
+import { useAuth } from "..//hooks/useAuth";
+import { useToast } from "..//hooks/use-toast";
+import Layout from "..//components/Layout";
 import Landing from "./Landing";
 
 export default function Home() {
