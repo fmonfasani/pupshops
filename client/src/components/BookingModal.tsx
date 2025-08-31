@@ -13,10 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form";
 import { X } from "lucide-react";
 import { isUnauthorizedError } from "../lib/authUtils";
+import type { Service } from "@shared/schema";
 
 interface BookingModalProps {
   onClose: () => void;
-  selectedService?: any;
+  selectedService?: Service;
 }
 
 const bookingSchema = z.object({
@@ -33,7 +34,7 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 export default function BookingModal({ onClose, selectedService }: BookingModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: services = [] } = useQuery({
+  const { data: services = [] } = useQuery<Service[]>({
     queryKey: ["/api/services"],
     queryFn: api.getServices,
   });
@@ -52,7 +53,7 @@ export default function BookingModal({ onClose, selectedService }: BookingModalP
 
   const createBookingMutation = useMutation({
     mutationFn: (data: BookingFormData) => {
-      const service = services.find(s => s.id === data.serviceId);
+      const service = services.find((s) => s.id === data.serviceId);
       return api.createBooking({
         ...data,
         price: service?.basePrice || "0",
@@ -128,7 +129,7 @@ export default function BookingModal({ onClose, selectedService }: BookingModalP
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {services.map((service: any) => (
+                        {services.map((service) => (
                           <SelectItem key={service.id} value={service.id} data-testid={`option-service-${service.id}`}>
                             {service.name} - ${service.basePrice}
                           </SelectItem>
