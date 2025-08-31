@@ -1,34 +1,37 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+
+import 'dotenv/config';
+import express, { type Request, Response, NextFunction } from 'express';
+import { registerRoutes } from './routes';
+import { setupVite, serveStatic, log } from './vite';
 
 const app = express();
+app.disable('x-powered-by');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Logger simple para /api
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse: Record<string, any> | undefined;
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+  const originalResJson = res.json.bind(res);
+  // @ts-expect-error: mantener firma flexible
+  res.json = function (body: any, ...args: any[]) {
+    capturedJsonResponse = body;
+    return originalResJson(body, ...args);
   };
 
-  res.on("finish", () => {
+  res.on('finish', () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
+    if (path.startsWith('/api')) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        try {
+          logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        } catch { /* ignore */ }
       }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
+      if (logLine.length > 80) logLine = logLine.slice(0, 79) + '…';
       log(logLine);
     }
   });
@@ -37,35 +40,45 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Registra rutas (puede devolver un http.Server)
   const server = await registerRoutes(app);
 
+  // Manejo de errores global
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
+    const status = err?.status || err?.statusCode || 500;
+    const message = err?.message || 'Internal Server Error';
     res.status(status).json({ message });
-    throw err;
+    if (process.env.NODE_ENV !== 'test') {
+      console.error(err);
+    }
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  const isDev = (process.env.NODE_ENV ?? 'development') !== 'production';
+  console.log('[BOOT]', { NODE_ENV: process.env.NODE_ENV, isDev });
+
+  if (isDev) {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    try {
+      serveStatic(app);
+    } catch (e) {
+      console.warn('No build found, fallback to Vite dev:', (e as Error).message);
+      await setupVite(app, server);
+    }
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+
+  // Puerto/host locales (sin Replit)
+  const port = Number.parseInt(process.env.PORT || '3001', 10);
+  const host = process.env.HOST || '0.0.0.0';
+
+  // Mantengo la firma con objeto (y reusePort) si tu server la soporta
+  //server.listen(
+  //  { port, host, reusePort: true } as any,
+  //  () => log(`Server listening on http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)
+  //);
+
+  server.listen(port, () => log(`Server listening on http://localhost:${port}`));
+
+
 })();
