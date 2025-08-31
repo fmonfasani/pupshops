@@ -1,12 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+
 import bcrypt from 'bcryptjs';
-import { db } from './db.ts';
+import { db } from './db';
+
 import { sql } from 'drizzle-orm';
 
-type JwtPayload = { uid: string };
-const JWT_SECRET = process.env.JWT_SECRET!;
-const TOKEN_TTL = process.env.TOKEN_TTL ?? '7d';
+type JwtPayload = { uid: string };const JWT_SECRET = process.env.JWT_SECRET ?? '';
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be set');
+}
+const TOKEN_TTL = (process.env.TOKEN_TTL as jwt.SignOptions['expiresIn']) ?? '7d';
 
 function signToken(uid: string) {
   return jwt.sign({ uid } as JwtPayload, JWT_SECRET, { expiresIn: TOKEN_TTL });
