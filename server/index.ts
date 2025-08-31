@@ -1,6 +1,7 @@
 
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from 'express';
+import { createServer } from 'http';
 import { registerRoutes } from './routes';
 import { setupVite, serveStatic, log } from './vite';
 
@@ -16,10 +17,9 @@ app.use((req, res, next) => {
   let capturedJsonResponse: Record<string, any> | undefined;
 
   const originalResJson = res.json.bind(res);
-  // @ts-expect-error: mantener firma flexible
-  res.json = function (body: any, ...args: any[]) {
+  res.json = function (body: any) {
     capturedJsonResponse = body;
-    return originalResJson(body, ...args);
+    return originalResJson(body);
   };
 
   res.on('finish', () => {
@@ -40,8 +40,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Registra rutas (puede devolver un http.Server)
-  const server = await registerRoutes(app);
+  await registerRoutes(app);
+  const server = createServer(app);
 
   // Manejo de errores global
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
