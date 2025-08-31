@@ -1,27 +1,22 @@
-// server/app.ts
-import express from "express";
-import cors from "cors";
+import express from 'express';
+import cors from 'cors';
+import type { Express } from 'express';
+import { registerRoutes } from './routes';
 
 export const app = express();
-app.disable("x-powered-by");
 
-// CORS: en Vercel servís front y API en el mismo dominio,
-// pero dejamos credentials por si usás dominio separado.
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Inicializador perezoso para registrar rutas 1 sola vez
-let initialized = false;
+let wired = false;
 export async function setupApp() {
-  if (initialized) return;
-  const { registerRoutes } = await import("./routes");
-  await registerRoutes(app);
-  initialized = true;
+  if (wired) return;
+
+  app.use(cors({ origin: true, credentials: true }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+
+  // health interno (duplicado por si se usa el app directo)
+  app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+  await registerRoutes(app as Express);
+
+  wired = true;
 }
