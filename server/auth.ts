@@ -55,13 +55,20 @@ export async function login(req: Request, res: Response) {
   const { email, password } = req.body ?? {};
   if (!email || !password) return res.status(400).json({ error: 'email & password required' });
 
-  const { rows } = await db.execute(
+    const { rows } = await db.execute(
     sql`select id, email, password_hash from users where email = ${email} limit 1`
   );
-  const user = rows[0];
-  if (!user?.password_hash) return res.status(401).json({ error: 'invalid credentials' });
+  const user = rows[0] as any;
 
-  const ok = await bcrypt.compare(password, user.password_hash);
+  // Normalizamos el hash a string para evitar el {} tipado por TS/neon
+  const hash: string = typeof user?.password_hash === 'string'
+    ? user.password_hash
+    : String(user?.password_hash ?? '');
+
+  if (!hash) return res.status(401).json({ error: 'invalid credentials' });
+
+  const ok = await bcrypt.compare(password, hash);
+
   if (!ok) return res.status(401).json({ error: 'invalid credentials' });
 
   const token = signToken(String(user.id));
