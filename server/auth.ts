@@ -6,15 +6,9 @@ import { db } from './db';
 
 import { sql } from 'drizzle-orm';
 
-type JwtPayload = { uid: string };const JWT_SECRET = process.env.JWT_SECRET ?? '';
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET must be set');
-}
-const TOKEN_TTL = (process.env.TOKEN_TTL as jwt.SignOptions['expiresIn']) ?? '7d';
+type JwtPayload = { uid: string };
 
-function signToken(uid: string) {
-  return jwt.sign({ uid } as JwtPayload, JWT_SECRET, { expiresIn: TOKEN_TTL });
-}
+
 
 export function authRequired(req: Request, res: Response, next: NextFunction) {
   const h = req.headers.authorization || '';
@@ -29,6 +23,21 @@ export function authRequired(req: Request, res: Response, next: NextFunction) {
     res.status(401).json({ error: 'invalid token' });
   }
 }
+// en vez del throw global, usa getter perezoso
+const getJwtSecret = () => {
+  const s = process.env.JWT_SECRET;
+  if (!s) throw new Error('JWT_SECRET must be set');
+  return s;
+};
+const TOKEN_TTL: jwt.SignOptions['expiresIn'] = (process.env.TOKEN_TTL as any) ?? '7d';
+
+function signToken(uid: string) {
+  return jwt.sign({ uid } as JwtPayload, getJwtSecret(), { expiresIn: TOKEN_TTL });
+}
+
+// y en authRequired:
+const payload = jwt.verify(token, getJwtSecret()) as JwtPayload;
+
 
 export async function register(req: Request, res: Response) {
   const { email, password, name } = req.body ?? {};

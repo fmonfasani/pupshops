@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { storage } from "./storage";
 import { register, login, authRequired } from "./auth";
-
+import { sql } from 'drizzle-orm';
 import {
   insertProductSchema,
   insertServiceSchema,
@@ -36,6 +36,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch {
       res.status(500).json({ message: "Failed to fetch categories" });
     }
+  });
+
+  app.get('/api/_diag', async (_req, res) => {
+    const hasDbUrl = Boolean(process.env.DATABASE_URL);
+    const hasJwt = Boolean(process.env.JWT_SECRET);
+    let dbOk = false, dbErr: string | null = null;
+
+    try {
+      // ping a la DB (no filtra secretos)
+      // @ts-ignore
+      const r = await storage.db?.execute?.(sql`select 1 as ok`) ?? await (await import('./db')).db.execute(sql`select 1 as ok`);
+      dbOk = Array.isArray(r?.rows) ? true : true; // drizzle-http vs node-postgres shape
+    } catch (e: any) {
+      dbErr = e?.message || String(e);
+    }
+
+    res.json({ env: { hasDbUrl, hasJwt, vercel: !!process.env.VERCEL, node: process.version }, db: { ok: dbOk, error: dbErr } });
   });
 
   app.post("/api/categories", authRequired, async (req: any, res) => {
