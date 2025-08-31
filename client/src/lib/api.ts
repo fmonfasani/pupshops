@@ -99,6 +99,9 @@ class ApiClient {
 const apiClient = new ApiClient();
 
 export const api = {
+  // Auth
+  getUser: () => apiClient.get("/api/auth/user"),
+
   // Products
   getProducts: () => apiClient.get("/api/products"),
   getProduct: (id: string) => apiClient.get(`/api/products/${id}`),
