@@ -1,3 +1,4 @@
+import CartModal from "./CartModal";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "../components/ui/button";
