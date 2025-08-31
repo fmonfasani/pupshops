@@ -283,7 +283,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Award points (1 point per dollar)
       const user = await storage.getUser(userId);
       if (user) {
-        const newPoints = user.points + Math.floor(parseFloat(totalAmount));
+        const currentPoints = Number(user?.points ?? 0);
+        const newPoints = currentPoints + Math.floor(parseFloat(totalAmount));
         await storage.updateUserPoints(userId, newPoints);
       }
 
@@ -331,7 +332,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       if (user) {
         const servicePoints = Math.floor(parseFloat(booking.price) / 10);
-        const newPoints = user.points + servicePoints;
+        const basePoints = Number(user?.points ?? 0);
+        const newPoints = basePoints + servicePoints;
         await storage.updateUserPoints(userId, newPoints);
       }
 

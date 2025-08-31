@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { db } from './db.ts_old';
+import { db } from './db.ts';
 import { sql } from 'drizzle-orm';
 
 type JwtPayload = { uid: string };

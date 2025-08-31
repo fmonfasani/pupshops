@@ -26,7 +26,7 @@ import {
   type InsertCategory,
   type InsertPromotion,
 } from "@shared/schema";
-import { db } from "./db.ts_old";
+import { db } from "./db.ts";
 import { eq, desc, and, gte } from "drizzle-orm";
 
 export interface IStorage {
