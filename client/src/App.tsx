@@ -12,6 +12,8 @@ import Services from "@/pages/Services";
 import Profile from "@/pages/Profile";
 import Admin from "@/pages/Admin";
 import Checkout from "@/pages/Checkout";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -27,7 +29,11 @@ function Router() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
+        </>
       ) : (
         <>
           <Route path="/" component={Home} />
@@ -43,7 +49,7 @@ function Router() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -53,5 +59,3 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-export default App;

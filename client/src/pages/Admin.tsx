@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useLocation } from "wouter";
 import { 
   BarChart3, 
   Package, 
@@ -48,6 +49,8 @@ const serviceSchema = z.object({
   petType: z.enum(["dog", "cat", "both"]),
 });
 
+
+
 type ProductFormData = z.infer<typeof productSchema>;
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
@@ -59,6 +62,7 @@ export default function Admin() {
   const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingService, setEditingService] = useState<any>(null);
+  const [, setLocation] = useLocation();
 
   const { data: stats } = useQuery({
     queryKey: ["/api/admin/stats"],
@@ -86,18 +90,11 @@ export default function Admin() {
   });
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== 'admin')) {
-      toast({
-        title: "Unauthorized",
-        description: "Admin access required.",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, user, toast]);
+  if (!isLoading && (!isAuthenticated || user?.role !== 'admin')) {
+    toast({ title: "Unauthorized", description: "Admin access required.", variant: "destructive" });
+    setTimeout(() => setLocation("/login"), 300);
+  }
+}, [isAuthenticated, isLoading, user, toast, setLocation]);
 
   if (isLoading || !isAuthenticated || user?.role !== 'admin') {
     return (
