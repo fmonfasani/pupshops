@@ -1,66 +1,92 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto, LoginDto } from './dto';
 
-interface AuthPayload {
-  token: string;
-  user: {
-    id: number;
-    email: string;
-    name?: string;
-  };
-}
-
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
-  private buildAuthPayload(user: { id: number; email: string; name?: string }): AuthPayload {
-    const token = this.jwt.sign({ sub: user.id, email: user.email });
+  async register(registerDto: RegisterDto) {
+    const { email, password, name, phone } = registerDto;
+
+    // Check if user exists
+    const userExists = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (userExists) {
+      throw new ConflictException('User already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        phone,
+      },
+    });
+
+    // Create loyalty record
+    await this.prisma.loyalty.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
+    // Generate token
+    const token = this.jwtService.sign({ sub: user.id, email: user.email });
+
     return {
-      token,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
-      }
+        name: user.name,
+        phone: user.phone,
+      },
+      token,
     };
   }
 
-  async register(dto: RegisterDto): Promise<AuthPayload> {
-    const existing = await this.prisma.findUserByEmail(dto.email);
-    if (existing) {
-      throw new BadRequestException('El correo electrónico ya está registrado.');
-    }
-    const user = await this.prisma.createUser({
-      email: dto.email,
-      password: dto.password,
-      name: dto.name
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    // Find user
+    const user = await this.prisma.user.findUnique({
+      where: { email },
     });
 
-    return this.buildAuthPayload(user);
-  }
-
-  async login(dto: LoginDto): Promise<AuthPayload> {
-    const user = await this.prisma.validateUser(dto.email, dto.password);
     if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas.');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.buildAuthPayload(user);
-  }
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  async getProfileFromToken(token: string) {
-    try {
-      const payload = this.jwt.verify<{ sub: number }>(token);
-      const user = await this.prisma.findUserById(payload.sub);
-      if (!user) {
-        throw new UnauthorizedException();
-      }
-      return { id: user.id, email: user.email, name: user.name };
-    } catch (error) {
-      throw new UnauthorizedException('Token inválido.');
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
     }
+
+    // Generate token
+    const token = this.jwtService.sign({ sub: user.id, email: user.email });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+      },
+      token,
+    };
   }
 }

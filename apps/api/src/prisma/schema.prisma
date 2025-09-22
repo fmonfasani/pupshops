@@ -8,47 +8,254 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  name          String?
-  passwordHash  String
-  orders        Order[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders       Order[]
+  appointments Appointment[]
+  loyalty      Loyalty?
+  coupons      Coupon[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("categories")
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          String   @id @default(cuid())
   name        String
-  slug        String  @unique
+  description String?
   price       Float
-  description String
-  category    String
-  image       String
+  sku         String   @unique
+  stock       Int      @default(0)
+  categoryId  String
+  slug        String   @unique
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category            Category           @relation(fields: [categoryId], references: [id])
+  inventoryMovements  InventoryMovement[]
+  orderItems          OrderItem[]
+  reviews             Review[]
+
+  @@map("products")
+}
+
+model InventoryMovement {
+  id        String           @id @default(cuid())
+  type      InventoryType
+  quantity  Int
+  productId String
+  notes     String?
+  createdAt DateTime         @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("inventory_movements")
 }
 
 model Service {
-  id              Int      @id @default(autoincrement())
-  name            String
-  slug            String   @unique
-  description     String
-  durationMinutes Int
-  price           Float
-  appointments    Appointment[]
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  durationMin   Int
+  priceFrom     Float
+  slug          String   @unique
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  staff        Staff[]
+  appointments Appointment[]
+  reviews      Review[]
+
+  @@map("services")
+}
+
+model Staff {
+  id         String   @id @default(cuid())
+  name       String
+  email      String?
+  phone      String?
+  serviceId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  service  Service        @relation(fields: [serviceId], references: [id])
+  slots    ServiceSlot[]
+
+  @@map("staff")
+}
+
+model ServiceSlot {
+  id        String   @id @default(cuid())
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+  capacity  Int
+  staffId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff        Staff         @relation(fields: [staffId], references: [id])
+  appointments Appointment[]
+
+  @@map("service_slots")
 }
 
 model Appointment {
-  id           Int     @id @default(autoincrement())
-  service      Service @relation(fields: [serviceId], references: [id])
-  serviceId    Int
-  customerName String
-  customerEmail String
-  scheduledFor DateTime
+  id          String           @id @default(cuid())
+  status      AppointmentStatus
+  date        DateTime
+  startTime   DateTime
+  endTime     DateTime
+  notes       String?
+  userId      String
+  serviceId   String
+  staffId     String
+  slotId      String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  user    User         @relation(fields: [userId], references: [id])
+  service Service      @relation(fields: [serviceId], references: [id])
+  staff   Staff        @relation(fields: [staffId], references: [id])
+  slot    ServiceSlot  @relation(fields: [slotId], references: [id])
+
+  @@map("appointments")
 }
 
 model Order {
-  id        Int      @id @default(autoincrement())
+  id        String       @id @default(cuid())
+  status    OrderStatus
   total     Float
-  status    String
+  userId    String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user      User         @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+  coupons   OrderCoupon[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        CouponType
+  value       Float
+  minAmount   Float?
+  expiryDate  DateTime?
+  maxUses     Int?
+  usedCount   Int      @default(0)
+  userId      String?  // Si es de un usuario específico
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id])
+  orders OrderCoupon[]
+
+  @@map("coupons")
+}
+
+model OrderCoupon {
+  id       String @id @default(cuid())
+  orderId  String
+  couponId String
+
+  order  Order  @relation(fields: [orderId], references: [id])
+  coupon Coupon @relation(fields: [couponId], references: [id])
+
+  @@unique([orderId, couponId])
+  @@map("order_coupons")
+}
+
+model Loyalty {
+  id          String @id @default(cuid())
+  userId      String @unique
+  points      Int    @default(0)
+  lastUpdated DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("loyalty")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  productId String?
+  serviceId String?
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  updatedAt DateTime @updatedAt
+
+  product Product? @relation(fields: [productId], references: [id])
+  service Service? @relation(fields: [serviceId], references: [id])
+
+  @@map("reviews")
+}
+
+model EventLog {
+  id        String   @id @default(cuid())
+  event     String
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@map("event_logs")
+}
+
+enum InventoryType {
+  IN
+  OUT
+  ADJUST
+}
+
+enum AppointmentStatus {
+  RESERVED
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
 }
