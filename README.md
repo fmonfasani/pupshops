@@ -1,43 +1,48 @@
-# PupShops - Pet Marketplace Application
+# Petshop App Monorepo
 
-A complete fullstack pet marketplace application built with React, Express.js, and PostgreSQL. PupShops offers a comprehensive platform for pet owners to purchase products and book professional services for their furry friends.
+Este repositorio contiene una aplicación completa de comercio electrónico para una tienda de mascotas. El proyecto está organizado como un monorepo gestionado con pnpm e incluye:
 
-## 🐾 Features
+- **apps/api**: API REST construida con NestJS y Prisma.
+- **apps/web**: Frontend construido con Next.js 13 (App Router) y Tailwind CSS.
+- **docker-compose.yml**: Entorno de desarrollo local con base de datos PostgreSQL.
 
-### For Pet Owners
-- **Product Marketplace**: Browse and purchase pet food, toys, accessories, and health products
-- **Service Booking**: Schedule appointments for veterinary care, grooming, boarding, and walking services
-- **Shopping Cart**: Add multiple products, manage quantities, and proceed to checkout
-- **User Profile**: Track order history, service appointments, and loyalty points
-- **Paw Points System**: Earn points with purchases and unlock rewards
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+## Requisitos
 
-### For Administrators
-- **Dashboard Analytics**: View sales metrics, order statistics, and appointment data
-- **Product Management**: Full CRUD operations for products with inventory tracking
-- **Service Management**: Manage available services, pricing, and scheduling
-- **Order Management**: Monitor and update order statuses
-- **Booking Management**: View and manage service appointments
-- **User Management**: Track customer activity and loyalty levels
+- Node.js >= 18
+- pnpm >= 8
+- Docker y Docker Compose (opcional, para levantar los servicios)
 
-### Technical Features
-- **Authentication**: Secure login with Replit Auth integration
-- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Real-time Updates**: React Query for efficient data fetching and caching
-- **Form Validation**: Comprehensive form validation with Zod schemas
-- **Modern UI**: Beautiful interface with Tailwind CSS and Shadcn components
-- **Pastel Design**: Custom green and orange pastel color scheme
+## Scripts principales
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- PostgreSQL database
-- Replit account (for authentication)
-
-### Installation
-
-1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd pupshops
+pnpm install       # instala dependencias en todos los paquetes
+pnpm dev:api       # levanta la API en modo desarrollo
+pnpm dev:web       # levanta la aplicación web en modo desarrollo
+pnpm build         # construye todos los paquetes
+pnpm lint          # ejecuta linters en todos los paquetes
+pnpm test          # ejecuta pruebas en todos los paquetes
+```
+
+## Uso con Docker
+
+```bash
+docker-compose up --build
+```
+
+Esto levantará la API, la aplicación web y una base de datos PostgreSQL.
+
+## Estructura del repositorio
+
+```
+petshop-app/
+├── apps/
+│   ├── api/
+│   └── web/
+├── docker-compose.yml
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+└── README.md
+```
+
+Cada aplicación incluye su propio README y scripts específicos.
