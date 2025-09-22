@@ -1,6 +1,7 @@
 node_modules
-dist
+pnpm-debug.log
+apps/api/dist
+apps/web/.next
+apps/web/out
+.idea
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
